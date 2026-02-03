@@ -3,3 +3,4 @@ config();
 
 import '@/ai/flows/translate-messages.ts';
 import '@/ai/flows/generate-medical-summary.ts';
+import '@/ai/flows/generate-reply.ts';

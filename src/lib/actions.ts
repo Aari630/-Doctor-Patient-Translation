@@ -4,10 +4,12 @@ import { revalidatePath } from 'next/cache';
 import { addMessage, getFullConversationText } from './data';
 import { translateMessages } from '@/ai/flows/translate-messages';
 import { generateMedicalSummary } from '@/ai/flows/generate-medical-summary';
+import { generateReply } from '@/ai/flows/generate-reply';
+import type { Role } from './definitions';
 
 export async function sendTextMessageAction(formData: FormData) {
   const originalText = formData.get('originalText') as string;
-  const userRole = formData.get('userRole') as 'Doctor' | 'Patient';
+  const userRole = formData.get('userRole') as Role;
   const userLanguage = formData.get('userLanguage') as string;
   const otherLanguage = formData.get('otherLanguage') as string;
   const conversationId = formData.get('conversationId') as string;
@@ -16,14 +18,14 @@ export async function sendTextMessageAction(formData: FormData) {
     return;
   }
 
-  // 1. Translate the message
+  // 1. Translate the user's message
   const translationResult = await translateMessages({
     text: originalText,
     sourceLanguage: userLanguage,
     targetLanguage: otherLanguage,
   });
 
-  // 2. Add message to the mock database
+  // 2. Add user's message to the mock database
   await addMessage({
     conversationId,
     senderRole: userRole,
@@ -31,7 +33,40 @@ export async function sendTextMessageAction(formData: FormData) {
     translatedText: translationResult.translatedText,
   });
 
-  // 3. Revalidate the path to update the UI
+  // --- Start AI Reply Logic ---
+  const otherRole = userRole === 'Doctor' ? 'Patient' : 'Doctor';
+
+  // We need the full conversation to give context to the AI
+  const conversationText = await getFullConversationText(conversationId);
+
+  // 3. Generate a reply from the other user (in their language)
+  const replyResult = await generateReply({
+    conversationText,
+    currentMessage: originalText, // The user's message
+    myRole: userRole,
+    otherRole: otherRole,
+    otherLanguage: otherLanguage, // AI should reply in the "other" language
+  });
+
+  const replyOriginalText = replyResult.replyText;
+
+  // 4. Translate the reply back to the current user's language
+  const replyTranslationResult = await translateMessages({
+    text: replyOriginalText,
+    sourceLanguage: otherLanguage,
+    targetLanguage: userLanguage,
+  });
+
+  // 5. Add the AI's reply message to the mock database
+  await addMessage({
+    conversationId,
+    senderRole: otherRole,
+    originalText: replyOriginalText,
+    translatedText: replyTranslationResult.translatedText,
+  });
+  // --- End AI Reply Logic ---
+
+  // 6. Revalidate the path to update the UI with both messages
   revalidatePath('/');
 }
 
