@@ -1,8 +1,8 @@
-# MediTranslate MVP
+# Healthcare Doctor–Patient Translation Web Application MVP
 
 ## Project Overview
 
-MediTranslate is an MVP web application designed to bridge communication gaps between doctors and patients who speak different languages. It provides near real-time translation of text and audio messages within a familiar chat interface. The application also leverages AI to generate concise medical summaries from conversation logs, aiding in clinical documentation and patient understanding.
+Healthcare Doctor–Patient Translation Web Application is an MVP web application designed to bridge communication gaps between doctors and patients who speak different languages. It provides near real-time translation of text and audio messages within a familiar chat interface. The application also leverages AI to generate concise medical summaries from conversation logs, aiding in clinical documentation and patient understanding.
 
 This project was built as a 12-hour take-home assignment, prioritizing core functionality and a clean, deployable architecture over extensive features and polish.
 

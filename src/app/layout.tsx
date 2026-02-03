@@ -3,8 +3,8 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'MediTranslate',
-  description: 'Doctor-Patient Translation Web App',
+  title: 'Healthcare Doctor–Patient Translation Web Application',
+  description: 'Healthcare Doctor-Patient Translation Web Application',
 };
 
 export default function RootLayout({

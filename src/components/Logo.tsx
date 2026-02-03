@@ -4,7 +4,7 @@ export function Logo() {
   return (
     <div className="flex items-center gap-2">
       <Stethoscope className="h-6 w-6 text-primary" />
-      <h1 className="text-xl font-bold text-foreground">MediTranslate</h1>
+      <h1 className="text-xl font-bold text-foreground">HealthTranslate</h1>
     </div>
   );
 }
